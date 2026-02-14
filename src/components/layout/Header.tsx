@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { BarChart3, TrendingUp, Wallet, Menu, X } from 'lucide-react';
@@ -19,10 +20,8 @@ export default function Header() {
     <header className="sticky top-0 z-50 border-b border-border-primary bg-bg-primary/80 backdrop-blur-xl">
       <div className="mx-auto flex h-14 max-w-7xl items-center justify-between px-4">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 font-bold text-lg">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-accent-indigo text-white text-sm font-bold">
-            3M
-          </div>
+        <Link href="/" className="flex items-center gap-2 font-bold text-lg">
+          <Image src="/logo.png" alt="3Markets" width={32} height={32} />
           <span className="hidden sm:inline">3Markets</span>
         </Link>
 
