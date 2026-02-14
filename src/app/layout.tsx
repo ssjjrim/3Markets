@@ -6,8 +6,8 @@ export const metadata: Metadata = {
   title: "3Markets - Prediction Market Aggregator",
   description: "Trade on Polymarket, Kalshi, and Opinion from one dashboard. Real-time data, analytics, and builder tools.",
   icons: {
-    icon: "/logo.png",
-    apple: "/logo.png",
+    icon: "/icon.png",
+    apple: "/apple-icon.png",
   },
 };
 
