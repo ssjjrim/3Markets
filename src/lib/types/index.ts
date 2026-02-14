@@ -99,6 +99,7 @@ export interface PolymarketEvent {
   endDate: string;
   active: boolean;
   closed: boolean;
+  createdAt?: string;
   tags: { label: string }[];
 }
 
