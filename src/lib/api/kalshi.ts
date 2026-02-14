@@ -38,6 +38,15 @@ export async function fetchKalshiMarkets(params?: {
   return res.json();
 }
 
+export async function fetchKalshiEvent(eventTicker: string): Promise<{ event: KalshiEvent }> {
+  const searchParams = new URLSearchParams();
+  searchParams.set('endpoint', `events/${eventTicker}`);
+  searchParams.set('with_nested_markets', 'true');
+  const res = await fetch(`${API_BASE}?${searchParams.toString()}`);
+  if (!res.ok) throw new Error(`Kalshi event error: ${res.status}`);
+  return res.json();
+}
+
 export async function fetchKalshiMarket(ticker: string): Promise<{ market: KalshiMarket }> {
   const res = await fetch(`${API_BASE}?endpoint=markets/${ticker}`);
   if (!res.ok) throw new Error(`Kalshi market error: ${res.status}`);

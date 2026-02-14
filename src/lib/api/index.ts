@@ -81,5 +81,5 @@ export async function fetchAllMarkets(filter?: MarketFilter): Promise<Market[]> 
 }
 
 export { fetchPolymarketEvents, fetchPolymarketEvent, normalizePolymarketEvent } from './polymarket';
-export { fetchKalshiEvents, fetchKalshiMarkets, fetchKalshiMarket, normalizeKalshiEvent, normalizeKalshiMarket } from './kalshi';
+export { fetchKalshiEvents, fetchKalshiEvent, fetchKalshiMarkets, fetchKalshiMarket, normalizeKalshiEvent, normalizeKalshiMarket } from './kalshi';
 export { fetchOpinionTopics, fetchOpinionTopic, normalizeOpinionTopic, fetchOpinionMarkets, fetchOpinionMarket, normalizeOpinionMarket } from './opinion';

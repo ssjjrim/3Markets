@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import type { Market, Platform } from '@/lib/types';
 import { fetchPolymarketEvent, normalizePolymarketEvent } from '@/lib/api/polymarket';
-import { fetchKalshiMarket, normalizeKalshiMarket } from '@/lib/api/kalshi';
+import { fetchKalshiEvent, normalizeKalshiEvent } from '@/lib/api/kalshi';
 import { fetchOpinionTopic, normalizeOpinionTopic } from '@/lib/api/opinion';
 import TradingPanel from '@/components/trading/TradingPanel';
 import PlatformBadge from '@/components/common/PlatformBadge';
@@ -32,8 +32,8 @@ export default function MarketDetailPage() {
             break;
           }
           case 'kalshi': {
-            const { market: km } = await fetchKalshiMarket(slug.toUpperCase());
-            setMarket(normalizeKalshiMarket(km));
+            const { event } = await fetchKalshiEvent(slug.toUpperCase());
+            setMarket(normalizeKalshiEvent(event));
             break;
           }
           case 'opinion': {
