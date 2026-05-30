@@ -62,6 +62,7 @@ export function normalizeOpinionTopic(topic: OpinionTopic): Market {
     id: String(topic.topicId),
     slug: String(topic.topicId),
     platform: 'opinion',
+    collateralAsset: 'USDT',
     question: topic.title,
     description: topic.abstract || topic.rules || '',
     category: topic.labelName?.[0] || 'General',

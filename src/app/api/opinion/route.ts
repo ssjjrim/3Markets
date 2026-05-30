@@ -23,7 +23,7 @@ export async function GET(request: NextRequest) {
 
     const data = await res.json();
     return NextResponse.json(data);
-  } catch (err) {
+  } catch {
     return NextResponse.json({ errno: -1, errmsg: 'Failed to fetch from Opinion' }, { status: 500 });
   }
 }

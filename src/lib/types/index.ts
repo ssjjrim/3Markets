@@ -1,9 +1,11 @@
 export type Platform = 'polymarket' | 'kalshi' | 'opinion';
+export type CollateralAsset = 'USD' | 'USDT' | 'pUSD';
 
 export interface Market {
   id: string;
   slug: string;
   platform: Platform;
+  collateralAsset: CollateralAsset;
   question: string;
   description: string;
   category: string;
@@ -46,6 +48,7 @@ export interface TradeOrder {
   amount: number;
   price?: number;
   type: 'market' | 'limit';
+  builderCode?: string | null;
 }
 
 export interface PlatformConfig {

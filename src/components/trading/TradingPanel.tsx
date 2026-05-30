@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { Market, Platform } from '@/lib/types';
+import { formatCollateralAmount, getPlatformCollateralAsset } from '@/lib/utils';
 import { ArrowUpRight, ArrowDownRight, Info, ExternalLink } from 'lucide-react';
 
 interface TradingPanelProps {
@@ -17,8 +18,9 @@ export default function TradingPanel({ market }: TradingPanelProps) {
 
   const outcome = market.outcomes[outcomeIdx];
   const price = outcome?.price ?? 0;
-  const shares = amount ? parseFloat(amount) / price : 0;
+  const shares = amount && price > 0 ? parseFloat(amount) / price : 0;
   const potentialProfit = shares * (1 - price);
+  const collateralAsset = market.collateralAsset ?? getPlatformCollateralAsset(market.platform);
 
   const platformGuide = getPlatformGuide(market.platform);
 
@@ -103,7 +105,7 @@ export default function TradingPanel({ market }: TradingPanelProps) {
 
         {/* Amount */}
         <div>
-          <label htmlFor="trade-amount" className="text-xs text-text-muted mb-1.5 block">Amount (USD)</label>
+          <label htmlFor="trade-amount" className="text-xs text-text-muted mb-1.5 block">Amount ({collateralAsset})</label>
           <input
             id="trade-amount"
             type="number"
@@ -119,7 +121,7 @@ export default function TradingPanel({ market }: TradingPanelProps) {
                 onClick={() => setAmount(v)}
                 className="px-3 py-1.5 text-xs rounded-md bg-bg-tertiary text-text-muted hover:text-text-secondary hover:bg-bg-card-hover border border-border-primary transition-colors"
               >
-                ${v}
+                {collateralAsset === 'USD' ? `$${v}` : `${v} ${collateralAsset}`}
               </button>
             ))}
           </div>
@@ -155,7 +157,9 @@ export default function TradingPanel({ market }: TradingPanelProps) {
             </div>
             <div className="flex justify-between text-text-secondary">
               <dt>Potential Return</dt>
-              <dd className="text-pm-green font-medium">${potentialProfit.toFixed(2)}</dd>
+              <dd className="text-pm-green font-medium">
+                {formatCollateralAmount(potentialProfit, collateralAsset)}
+              </dd>
             </div>
           </dl>
         )}
@@ -192,7 +196,7 @@ function getPlatformGuide(platform: Platform) {
     case 'polymarket':
       return {
         title: 'Trade on Polymarket',
-        description: 'Connect your wallet and trade with USDC on Polygon. Shares pay $1 if correct, $0 if wrong.',
+        description: 'Connect your wallet and trade with pUSD on Polygon. Shares settle at 1 pUSD if correct, 0 if wrong.',
       };
     case 'kalshi':
       return {

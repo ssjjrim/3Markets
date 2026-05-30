@@ -10,7 +10,8 @@ import TradingPanel from '@/components/trading/TradingPanel';
 import PlatformBadge from '@/components/common/PlatformBadge';
 import { ExternalLink, Clock, TrendingUp, BarChart3, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { timeUntil, formatCurrency } from '@/lib/utils';
+import Image from 'next/image';
+import { timeUntil, formatMarketCurrency } from '@/lib/utils';
 
 export default function MarketDetailPage() {
   const params = useParams();
@@ -93,9 +94,12 @@ export default function MarketDetailPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row gap-4 md:items-start">
         {market.image && (
-          <img
+          <Image
             src={market.image}
             alt=""
+            width={64}
+            height={64}
+            unoptimized
             className="w-16 h-16 rounded-xl object-cover bg-bg-tertiary shrink-0"
             onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
           />
@@ -176,7 +180,7 @@ export default function MarketDetailPage() {
                 <div className="flex items-center gap-1.5 text-text-muted text-xs mb-1">
                   <BarChart3 size={12} /> Liquidity
                 </div>
-                <div className="text-sm font-semibold">{formatCurrency(market.liquidity)}</div>
+                <div className="text-sm font-semibold">{formatMarketCurrency(market.liquidity, market)}</div>
               </div>
               <div>
                 <div className="flex items-center gap-1.5 text-text-muted text-xs mb-1">

@@ -1,4 +1,6 @@
 import { clsx, type ClassValue } from 'clsx';
+import { POLYMARKET_COLLATERAL_ASSET } from '@/lib/polymarketConfig';
+import type { CollateralAsset, Platform } from '@/lib/types';
 
 export function cn(...inputs: ClassValue[]) {
   return clsx(inputs);
@@ -8,6 +10,40 @@ export function formatCurrency(value: number, decimals = 2): string {
   if (value >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}M`;
   if (value >= 1_000) return `$${(value / 1_000).toFixed(1)}K`;
   return `$${value.toFixed(decimals)}`;
+}
+
+export function getPlatformCollateralAsset(platform: Platform): CollateralAsset {
+  if (platform === 'polymarket') return POLYMARKET_COLLATERAL_ASSET;
+  if (platform === 'opinion') return 'USDT';
+  return 'USD';
+}
+
+export function formatCollateralAmount(value: number, collateralAsset: CollateralAsset, decimals = 2): string {
+  if (collateralAsset === 'pUSD') {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M pUSD`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K pUSD`;
+    return `${value.toFixed(decimals)} pUSD`;
+  }
+
+  if (collateralAsset === 'USDT') {
+    if (value >= 1_000_000) return `${(value / 1_000_000).toFixed(1)}M USDT`;
+    if (value >= 1_000) return `${(value / 1_000).toFixed(1)}K USDT`;
+    return `${value.toFixed(decimals)} USDT`;
+  }
+
+  return formatCurrency(value, decimals);
+}
+
+export function formatMarketCurrency(
+  value: number,
+  market: { platform: Platform; collateralAsset?: CollateralAsset },
+  decimals = 2
+): string {
+  return formatCollateralAmount(
+    value,
+    market.collateralAsset ?? getPlatformCollateralAsset(market.platform),
+    decimals
+  );
 }
 
 export function formatPercent(value: number): string {

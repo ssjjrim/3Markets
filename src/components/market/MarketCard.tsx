@@ -6,6 +6,7 @@ import PlatformBadge from '@/components/common/PlatformBadge';
 import { timeUntil } from '@/lib/utils';
 import { Clock, TrendingUp } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function MarketCard({ market }: { market: Market }) {
   const [imgFailed, setImgFailed] = useState(false);
@@ -22,9 +23,12 @@ export default function MarketCard({ market }: { market: Market }) {
       {/* Header */}
       <div className="flex items-start gap-3 mb-3">
         {market.image && !imgFailed ? (
-          <img
+          <Image
             src={market.image}
             alt=""
+            width={40}
+            height={40}
+            unoptimized
             className="w-10 h-10 rounded-lg object-cover shrink-0 bg-bg-tertiary"
             onError={() => setImgFailed(true)}
           />

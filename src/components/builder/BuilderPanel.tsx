@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { Copy, Check, ExternalLink, Code, Gift, TrendingUp, Users } from 'lucide-react';
+import { POLYMARKET_CLOB_HOST } from '@/lib/polymarketConfig';
 
 export default function BuilderPanel() {
   const [builderCode, setBuilderCode] = useState('');
@@ -13,6 +14,8 @@ export default function BuilderPanel() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
+
+  const builderCodeExample = buildBuilderCodeExample(builderCode);
 
   return (
     <div className="space-y-6">
@@ -166,7 +169,7 @@ export default function BuilderPanel() {
             <div className="space-y-3">
               {[
                 { step: '1', title: 'Get Builder Code', desc: 'Apply at polymarket.com/builders to receive your unique code' },
-                { step: '2', title: 'Integrate API', desc: 'Use the CLOB API with your builder code in order headers' },
+                { step: '2', title: 'Integrate API', desc: 'Send builderCode as a field on the CLOB order payload' },
                 { step: '3', title: 'Track Activity', desc: 'Volume from your app is tracked automatically via your code' },
                 { step: '4', title: 'Earn Rewards', desc: 'Weekly rewards distributed based on your app\'s trading activity' },
               ].map((item) => (
@@ -188,31 +191,14 @@ export default function BuilderPanel() {
             <div className="flex items-center justify-between mb-3">
               <h3 className="font-semibold text-sm">API Integration Example</h3>
               <button
-                onClick={() => copyCode(`// Initialize with Builder Code\nconst headers = {\n  'Authorization': 'Bearer YOUR_API_KEY',\n  'X-Builder-Code': '${builderCode || 'YOUR_BUILDER_CODE'}'\n};\n\n// Place order via CLOB API\nconst response = await fetch('https://clob.polymarket.com/order', {\n  method: 'POST',\n  headers,\n  body: JSON.stringify({\n    tokenID: 'TOKEN_ID',\n    price: 0.55,\n    size: 100,\n    side: 'BUY'\n  })\n});`)}
+                onClick={() => copyCode(builderCodeExample)}
                 className="text-xs text-accent-indigo hover:underline flex items-center gap-1"
               >
                 <Copy size={12} /> Copy
               </button>
             </div>
             <pre className="bg-bg-primary rounded-lg p-4 text-xs text-text-secondary overflow-x-auto">
-              <code>{`// Initialize with Builder Code
-const headers = {
-  'Authorization': 'Bearer YOUR_API_KEY',
-  'X-Builder-Code': '${builderCode || 'YOUR_BUILDER_CODE'}'
-};
-
-// Place order via CLOB API
-const response = await fetch(
-  'https://clob.polymarket.com/order', {
-  method: 'POST',
-  headers,
-  body: JSON.stringify({
-    tokenID: 'TOKEN_ID',
-    price: 0.55,
-    size: 100,
-    side: 'BUY'
-  })
-});`}</code>
+              <code>{builderCodeExample}</code>
             </pre>
           </div>
 
@@ -266,4 +252,25 @@ const response = await fetch(
       )}
     </div>
   );
+}
+
+function buildBuilderCodeExample(builderCode: string): string {
+  return `// REAL_TRADING_ENABLED defaults to false in 3Markets.
+// Replace the no-op order path only after wallet, signing, and idempotency checks are ready.
+const order = {
+  tokenID: 'TOKEN_ID',
+  price: 0.55,
+  size: 100,
+  side: 'BUY',
+  builderCode: '${builderCode || 'YOUR_BUILDER_CODE'}'
+};
+
+const response = await fetch('${POLYMARKET_CLOB_HOST}/order', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer YOUR_API_KEY'
+  },
+  body: JSON.stringify(order)
+});`;
 }

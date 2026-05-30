@@ -1,4 +1,6 @@
 import type { Market, PolymarketEvent } from '@/lib/types';
+import { POLYMARKET_COLLATERAL_ASSET } from '@/lib/polymarketConfig';
+import { formatCollateralAmount } from '@/lib/utils';
 
 const API_BASE = '/api/polymarket';
 
@@ -63,13 +65,14 @@ export function normalizePolymarketEvent(event: PolymarketEvent): Market {
     id: event.id,
     slug: event.slug,
     platform: 'polymarket',
+    collateralAsset: POLYMARKET_COLLATERAL_ASSET,
     question: event.title,
     description: event.description || '',
     category: event.category || 'General',
     image: event.image,
     outcomes,
     volume: event.volume || 0,
-    volumeFormatted: formatVol(event.volume || 0),
+    volumeFormatted: formatCollateralAmount(event.volume || 0, POLYMARKET_COLLATERAL_ASSET),
     liquidity: event.liquidity || 0,
     endDate: event.endDate || '',
     status: event.closed ? 'closed' : event.active ? 'active' : 'closed',
@@ -77,10 +80,4 @@ export function normalizePolymarketEvent(event: PolymarketEvent): Market {
     url: `https://polymarket.com/event/${event.slug}`,
     tags: event.tags?.map(t => t.label) || [],
   };
-}
-
-function formatVol(v: number): string {
-  if (v >= 1e6) return `$${(v / 1e6).toFixed(1)}M`;
-  if (v >= 1e3) return `$${(v / 1e3).toFixed(1)}K`;
-  return `$${v.toFixed(0)}`;
 }

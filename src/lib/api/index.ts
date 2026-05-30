@@ -1,7 +1,7 @@
 import type { Market, Platform, MarketFilter } from '@/lib/types';
 import { fetchPolymarketEvents, normalizePolymarketEvent } from './polymarket';
 import { fetchKalshiEvents, normalizeKalshiEvent } from './kalshi';
-import { fetchOpinionTopics, normalizeOpinionTopic, fetchOpinionMarkets, normalizeOpinionMarket } from './opinion';
+import { fetchOpinionTopics, normalizeOpinionTopic } from './opinion';
 
 export async function fetchAllMarkets(filter?: MarketFilter): Promise<Market[]> {
   const platforms: Platform[] =

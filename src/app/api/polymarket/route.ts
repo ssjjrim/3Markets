@@ -1,19 +1,36 @@
 import { NextRequest, NextResponse } from 'next/server';
-
-const GAMMA_API = 'https://gamma-api.polymarket.com';
+import {
+  isAllowedPolymarketReadEndpoint,
+  isPolymarketTimeoutError,
+  normalizePolymarketEndpoint,
+  normalizePolymarketQuery,
+  POLYMARKET_REQUEST_TIMEOUT_MS,
+  resolvePolymarketHost,
+} from '@/lib/polymarketConfig';
 
 export async function GET(request: NextRequest) {
   const searchParams = new URLSearchParams(request.nextUrl.searchParams);
-  const endpoint = searchParams.get('endpoint') || 'events';
+  const endpoint = normalizePolymarketEndpoint(searchParams.get('endpoint') || 'events');
   searchParams.delete('endpoint');
 
+  if (!isAllowedPolymarketReadEndpoint(endpoint)) {
+    return NextResponse.json(
+      { error: 'Unsupported Polymarket read endpoint' },
+      { status: 400 }
+    );
+  }
+
   try {
-    const url = `${GAMMA_API}/${endpoint}?${searchParams.toString()}`;
+    const host = resolvePolymarketHost(endpoint);
+    const normalizedParams = normalizePolymarketQuery(endpoint, searchParams);
+    const query = normalizedParams.toString();
+    const url = `${host}/${endpoint}${query ? `?${query}` : ''}`;
     const res = await fetch(url, {
       headers: {
         'Accept': 'application/json',
         'User-Agent': '3Markets/1.0',
       },
+      signal: AbortSignal.timeout(POLYMARKET_REQUEST_TIMEOUT_MS),
       next: { revalidate: 30 },
     });
 
@@ -32,6 +49,13 @@ export async function GET(request: NextRequest) {
       },
     });
   } catch (err) {
+    if (isPolymarketTimeoutError(err)) {
+      return NextResponse.json(
+        { error: 'Polymarket API timeout' },
+        { status: 504 }
+      );
+    }
+
     console.error('Polymarket proxy error:', err);
     return NextResponse.json(
       { error: 'Failed to fetch from Polymarket' },
